@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Multiplayer Chess!1</h1>
+    <h2>Play with a friend</h2>
+
+    <label for="createRoomInput">Click Create Room for a code you can share with your friend.</label>
+    <input name="createRoomInput" type="submit" value="Create Room" onclick="CreateRoom()">
+    <p id="roomIdInformer"></p>
+
+    <label for="roomCode">To join a friends game, enter the code they give you.</label>
+    <input type="text" id="roomCode" name="roomCode">
+    <input type="submit" value="Join Room" onclick="JoinRoom()">
+
+    <div class="board">
+        <div class="row"><div class="rook2"></div> <div class="knight2"></div> <div class="bishop2"></div> <div class="queen2"></div> <div class="king2"></div> <div class="bishop2"></div> <div class="knight2"></div><div class="rook2"></div></div>
+        <div class="row"><div class="pawn2"></div> <div class="pawn2"></div> <div class="pawn2"></div> <div class="pawn2"></div> <div class="pawn2"></div> <div class="pawn2"></div> <div class="pawn2"></div><div class="pawn2"></div></div>
+        <div class="row"><div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div><div class="tile"></div></div>
+        <div class="row"><div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div><div class="tile"></div></div>
+        <div class="row"><div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div><div class="tile"></div></div>
+        <div class="row"><div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div><div class="tile"></div></div>
+        <div class="row"><div class="pawn1"></div> <div class="pawn1"></div> <div class="pawn1"></div> <div class="pawn1"></div> <div class="pawn1"></div> <div class="pawn1"></div> <div class="pawn1"></div><div class="pawn1"></div></div>
+        <div class="row"><div class="rook1"></div> <div class="knight1"></div> <div class="bishop1"></div> <div class="queen1"></div> <div class="king1"></div> <div class="bishop1"></div> <div class="knight1"></div><div class="rook1"></div></div>
+    </div>
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    
+    function CreateRoom(){
+        socket.emit('CreateRoom', socket.id);
+    }
+
+    function JoinRoom(){
+        roomId = document.getElementById("roomCode").value;
+        socket.emit('JoinRoom', {joinerId: socket.id, roomId: roomId});
+    }
+
+    socket.on('returnRoomId', (roomId) => {
+        document.getElementById("roomIdInformer").innerText="Room successfully created! Your room code is: "+roomId;
+    });
+
+</script>
+
+</html>
