@@ -8,7 +8,9 @@
 </head>
 <body>
     <h1>Multiplayer Chess!1</h1>
-    <h2>Play with a friend</h2>
+
+
+        <h2>Play with a friend</h2>
 
     <label for="createRoomInput">Click Create Room for a code you can share with your friend.</label>
     <input name="createRoomInput" type="submit" value="Create Room" onclick="CreateRoom()">
@@ -17,17 +19,10 @@
     <label for="roomCode">To join a friends game, enter the code they give you.</label>
     <input type="text" id="roomCode" name="roomCode">
     <input type="submit" value="Join Room" onclick="JoinRoom()">
+    <p id="inputtedCodeInformer"></p>
 
-    <div class="board">
-        <div class="row"><div class="rook2"></div> <div class="knight2"></div> <div class="bishop2"></div> <div class="queen2"></div> <div class="king2"></div> <div class="bishop2"></div> <div class="knight2"></div><div class="rook2"></div></div>
-        <div class="row"><div class="pawn2"></div> <div class="pawn2"></div> <div class="pawn2"></div> <div class="pawn2"></div> <div class="pawn2"></div> <div class="pawn2"></div> <div class="pawn2"></div><div class="pawn2"></div></div>
-        <div class="row"><div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div><div class="tile"></div></div>
-        <div class="row"><div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div><div class="tile"></div></div>
-        <div class="row"><div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div><div class="tile"></div></div>
-        <div class="row"><div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div> <div class="tile"></div><div class="tile"></div></div>
-        <div class="row"><div class="pawn1"></div> <div class="pawn1"></div> <div class="pawn1"></div> <div class="pawn1"></div> <div class="pawn1"></div> <div class="pawn1"></div> <div class="pawn1"></div><div class="pawn1"></div></div>
-        <div class="row"><div class="rook1"></div> <div class="knight1"></div> <div class="bishop1"></div> <div class="queen1"></div> <div class="king1"></div> <div class="bishop1"></div> <div class="knight1"></div><div class="rook1"></div></div>
-    </div>
+    <canvas id="chessBoard" width="512px", height="512px" style="border:3px solid"></canvas>
+
 </body>
 
 <script src="/socket.io/socket.io.js"></script>
@@ -47,6 +42,16 @@
         document.getElementById("roomIdInformer").innerText="Room successfully created! Your room code is: "+roomId;
     });
 
+    socket.on('returnJoinResult', (isCorrectCode) =>{
+        if(isCorrectCode){
+            document.getElementById("inputtedCodeInformer").innerText="Success!";
+        }
+        else{
+            document.getElementById("inputtedCodeInformer").innerText="Sorry, there is no available room that has that code.";
+        }
+    });
+
 </script>
+<script src="gameLogic.js"></script>
 
 </html>

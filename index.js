@@ -35,14 +35,19 @@ io.on('connection', (socket) => {
   });
 
   socket.on("JoinRoom", (arg, callback) => {
-    console.log("TEST!");
-    console.log(arg);
-    socket.join(arg.roomId);
-    const data = roomsData.get(arg.roomId);
-    data.joinerId = arg;
+    if(io.sockets.adapter.rooms.has(arg.roomId)){
+      console.log(arg);
+      socket.join(arg.roomId);
+      const data = roomsData.get(arg.roomId);
+      data.joinerId = arg;
 
-    console.log(`Room ${'test_room'} Creator:`, data.creatorId);
-    console.log(`Room ${'test_room'} Joiner:`, data.joinerId);
+      console.log(Math.floor(Math.random() * 2));
+
+      socket.emit('returnJoinResult', true);
+    }
+    else{
+      socket.emit('returnJoinResult', false);
+    }
   });
 
 });
