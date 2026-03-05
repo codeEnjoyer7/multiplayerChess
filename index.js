@@ -27,7 +27,6 @@ io.on('connection', (socket) => {
       creatorId: arg
     });
 
-    //console.log(roomsData.get(roomId));
     socket.emit('returnRoomId', roomId);
 
   });
@@ -45,10 +44,9 @@ io.on('connection', (socket) => {
       //server-side game logic goes below here?
 
       class King{
-        constructor(team, r, c){
+        constructor(team, tile){
             this.team=team;
-            this.r=r;
-            this.c=c;
+            this.tile=tile;
             this.symbol="k"
         }
         getTeam(){
@@ -65,10 +63,9 @@ io.on('connection', (socket) => {
       }
 
       class Queen{
-            constructor(team, r, c,){
+            constructor(team, tile){
                 this.team=team;
-                this.r=r;
-                this.c=c;
+                this.tile=tile;
                 this.symbol="q"
             }
         getTeam(){
@@ -85,10 +82,9 @@ io.on('connection', (socket) => {
         }
 
     class Bishop{
-        constructor(team, r, c){
+        constructor(team, tile){
             this.team=team;
-            this.r=r;
-            this.c=c;
+            this.tile=tile;
             this.symbol="b"
         }
         getTeam(){
@@ -105,10 +101,9 @@ io.on('connection', (socket) => {
     }
 
 class Knight{
-        constructor(team, r, c){
+        constructor(team, tile){
             this.team=team;
-            this.r=r;
-            this.c=c;
+            this.tile=tile;
             this.symbol="n"
         }
         getTeam(){
@@ -125,10 +120,9 @@ class Knight{
     }
 
   class Rook{
-        constructor(team, r, c){
+        constructor(team, tile,){
             this.team=team;
-            this.r=r;
-            this.c=c;
+            this.tile=tile;
             this.symbol="r"
         }
         getTeam(){
@@ -146,10 +140,9 @@ class Knight{
 
 
     class Pawn{
-        constructor(team, r, c){
+        constructor(team, tile){
             this.team=team;
-            this.r=r;
-            this.c=c;
+            this.tile=tile;
             this.symbol="p";
         }
 
@@ -168,46 +161,37 @@ class Knight{
     }
 
       let doesCreatorGoFirst = Math.floor(Math.random() * 2);
-      let board=[
-        [new Rook(2,0,0), new Knight(2,0,1), new Bishop(2,0,2), new Queen(2,0,3), new King(2,0,4), new Bishop(2,0,5), new Knight(2,0,6), new Rook(2,0,7)],
-        [new Pawn(2,1,0), new Pawn(2,1,1), new Pawn(2,1,2), new Pawn(2,1,3), new Pawn(2,1,4),new Pawn(2,1,5), new Pawn(2,1,6), new Pawn(2,1,7),],
-        [null,null,null,null,null,null,null,null],
-        [null,null,null,null,null,null,null,null],
-        [null,null,null,null,null,null,null,null],
-        [null,null,null,null,null,null,null,null],
-        [new Pawn(1,6,0), new Pawn(1,6,1), new Pawn(1,6,2), new Pawn(1,6,3), new Pawn(1,6,4),new Pawn(1,6,5), new Pawn(1,6,6), new Pawn(1,6,7)],
-        [new Rook(1,7,0), new Knight(1,7,1), new Bishop(1,7,2), new Queen(1,7,3), new King(1,7,4), new Bishop(1,7,5), new Knight(1,7,6), new Rook(1,7,7)]
-      ];
+      let board=[new Rook(2,0,0), new Knight(2,0,1), new Bishop(2,0,2), new Queen(2,0,3), new King(2,0,4), new Bishop(2,0,5), new Knight(2,0,6), new Rook(2,0,7), new Pawn(2,1,0), new Pawn(2,1,1), new Pawn(2,1,2), new Pawn(2,1,3), new Pawn(2,1,4),new Pawn(2,1,5), new Pawn(2,1,6), new Pawn(2,1,7), null,null,null,null,null,null,null,null, null,null,null,null,null,null,null,null, null,null,null,null,null,null,null,null, null,null,null,null,null,null,null,null, new Pawn(1,6,0), new Pawn(1,6,1), new Pawn(1,6,2), new Pawn(1,6,3), new Pawn(1,6,4),new Pawn(1,6,5), new Pawn(1,6,6), new Pawn(1,6,7), new Rook(1,7,0), new Knight(1,7,1), new Bishop(1,7,2), new Queen(1,7,3), new King(1,7,4), new Bishop(1,7,5), new Knight(1,7,6), new Rook(1,7,7)];
 
       let stringBoard ="";
-      for(let r=0; r<8; r++){
-        let emptySquares=0;
-        for(let c=0; c<8; c++){
-         // console.log(board[r][c]);
-         // console.log(emptySquares);
-          if(board[r][c]==null){
-            emptySquares+=1;
-            if(emptySquares==8){
+      let emptySquares=0;
+      for(let tile=0; tile<64; tile++){
+        if(board[tile]==null){
+          emptySquares+=1;
+          console.log(emptySquares);
+          if(emptySquares==8){
               stringBoard+=emptySquares;
-            }
-          }
-          
-          else if(board[r][c]!=null){
-            if(emptySquares>0){
-              stringBoard=stringBoard+emptySquares
               emptySquares=0;
-            }
+          }
+        }
+          
+        else if(board[tile]!=null){
+          if(emptySquares>0){
+            stringBoard=stringBoard+emptySquares
+            emptySquares=0;
+          }
 
-            if(board[r][c].getTeam()==1){
-              stringBoard+=board[r][c].symbol;
-            }
-            else if(board[r][c].getTeam()==2){
-              stringBoard+=board[r][c].symbol.toUpperCase();
-            }
+          if(board[tile].getTeam()==1){
+            stringBoard+=board[tile].symbol;
+          }
+          else if(board[tile].getTeam()==2){
+            stringBoard+=board[tile].symbol.toUpperCase();
           }
 
         }
-        stringBoard+="/"
+        if((tile+1)%8==0){
+          stringBoard+="/"
+        }
       }
       stringBoard=stringBoard.slice(0,-1);
       console.log(stringBoard);
