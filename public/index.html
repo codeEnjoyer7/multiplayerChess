@@ -50,6 +50,16 @@
             document.getElementById("inputtedCodeInformer").innerText="Sorry, there is no available room that has that code.";
         }
     });
+    
+    socket.on('ReturnWhitePerspective', () => {
+        console.log("You are on the white team");
+    });
+
+    socket.on('ReturnBlackPerspective', () => {
+        console.log("You are on the black team");
+    });
+
+
 
 </script>
 <script src="gameLogic.js"></script>
