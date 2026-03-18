@@ -57,6 +57,7 @@
         let ctx = c.getContext("2d");
         const sprites = new Image();
         sprites.src="betterSpriteSheet.png"
+        sprites.onload= () => {
 
         const colors = ["#eeeed2", "#769656"]; // Clean hex codes
         for (let r = 0; r < 8; r++) {
@@ -75,13 +76,14 @@
             getTeam(){
                 return this.team;
             }
-            drawSelf(){
+            drawSelf(ctx, sprites){
                 if(this.team==1){
-                    ctx.drawImage(sprites,-5,-5,151,155,this.c*64,this.r*64,64,64); //white king
+                    ctx.drawImage(sprites,-5,-5,151,155,(this.tile% 8)*64,Math.floor(this.tile/8)*64,64,64); //white king
                 }
                 else if(this.team==2){
-                    ctx.drawImage(sprites,-5,161,151,155,this.c*64,this.r*64,64,64); //black king
+                    ctx.drawImage(sprites,-5,161,151,155,(this.tile% 8)*64,Math.floor(this.tile/8)*64,64,64); //black king
                 }
+                console.log(this.tile);
             }
         }
 
@@ -94,12 +96,12 @@
             getTeam(){
                 return this.team;
             }
-            drawSelf(){
+            drawSelf(ctx, sprites){
                 if(this.team==1){
-                    ctx.drawImage(sprites,161,-5,161,155,this.c*64,this.r*64,64,64); //white queen
+                    ctx.drawImage(sprites,161,-5,161,155,(this.tile% 8)*64,Math.floor(this.tile/8)*64,64,64); //white queen
                 }
                 else if(this.team==2){
-                    ctx.drawImage(sprites,161,165,161,155,this.c*64,this.r*64,64,64); //black queen
+                    ctx.drawImage(sprites,161,165,161,155,(this.tile% 8)*64,Math.floor(this.tile/8)*64,64,64); //black queen
                 }
             }
         }
@@ -113,12 +115,12 @@
             getTeam(){
                 return this.team;
             }
-            drawSelf(){
+            drawSelf(ctx, sprites){
                 if(this.team==1){
-                    ctx.drawImage(sprites,327,-5,161,155,this.c*64,this.r*64,64,64); //white bishop
+                    ctx.drawImage(sprites,327,-5,161,155,(this.tile% 8)*64,Math.floor(this.tile/8)*64,64,64); //white bishop
                 }
                 else if(this.team==2){
-                    ctx.drawImage(sprites,327,165,161,155,this.c*64,this.r*64,64,64); //black bishop
+                    ctx.drawImage(sprites,327,165,161,155,(this.tile% 8)*64,Math.floor(this.tile/8)*64,64,64); //black bishop
                 }
             }
         }
@@ -132,12 +134,12 @@
             getTeam(){
                 return this.team;
             }
-            drawSelf(){
+            drawSelf(ctx, sprites){
                 if(this.team==1){
-                    ctx.drawImage(sprites,497,-5,161,155,this.c*64,this.r*64,64,64); //white pawn
+                    ctx.drawImage(sprites,497,-5,161,155,(this.tile% 8)*64,Math.floor(this.tile/8)*64,64,64); //white pawn
                 }
                 else if(this.team==2){
-                    ctx.drawImage(sprites,497,165,161,155,this.c*64,this.r*64,64,64); //black pawn
+                    ctx.drawImage(sprites,497,165,161,155,(this.tile% 8)*64,Math.floor(this.tile/8)*64,64,64); //black pawn
                 }
             }
         }
@@ -151,12 +153,12 @@
             getTeam(){
                 return this.team;
             }
-            drawSelf(){
+            drawSelf(ctx, sprites){
                 if(this.team==1){
-                    ctx.drawImage(sprites,669,-5,161,155,this.c*64,this.r*64,64,64); //white pawn
+                    ctx.drawImage(sprites,669,-5,161,155,(this.tile% 8)*64,Math.floor(this.tile/8)*64,64,64); //white pawn
                 }
                 else if(this.team==2){
-                    ctx.drawImage(sprites,669,165,161,155,this.c*64,this.r*64,64,64); //black pawn
+                    ctx.drawImage(sprites,669,165,161,155,(this.tile% 8)*64,Math.floor(this.tile/8)*64,64,64); //black pawn
                 }
             }
         }
@@ -173,12 +175,12 @@
                 return this.team;
             }
 
-            drawSelf(){
+            drawSelf(ctx, sprites){
                 if(this.team==1){
-                    ctx.drawImage(sprites,837,-5,161,155,this.c*64,this.r*64,64,64); //white pawn
+                    ctx.drawImage(sprites,837,-5,161,155,(this.tile% 8)*64,Math.floor(this.tile/8)*64,64,64); //white pawn
                 }
                 else if(this.team==2){
-                    ctx.drawImage(sprites,837,165,161,155,this.c*64,this.r*64,64,64); //black pawn
+                    ctx.drawImage(sprites,837,165,161,155,(this.tile% 8)*64,Math.floor(this.tile/8)*64,64,64); //black pawn
                 }
             }
         }
@@ -208,13 +210,15 @@
                 const isWhite = char === char.toUpperCase()
                 const PieceClass = PIECE_CLASSES[char.toLowerCase()];
                 if (PieceClass){
-                    objectBoard.push(new PieceClass(isWhite ? 1 : 2, tile));
+                    let piece = new PieceClass(isWhite ? 2 : 1, tile);
+                    objectBoard.push(piece);
+                    piece.drawSelf(ctx, sprites);
                     tile+=1;
                 }
             }
         }
         console.log(objectBoard);
-
+        }
     });
 
 </script>
