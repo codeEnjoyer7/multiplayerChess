@@ -210,14 +210,28 @@
                 const isWhite = char === char.toUpperCase()
                 const PieceClass = PIECE_CLASSES[char.toLowerCase()];
                 if (PieceClass){
-                    let piece = new PieceClass(isWhite ? 2 : 1, tile);
+                    let piece;
+                    if(assignedTeam==1){
+                        piece = new PieceClass(isWhite ? 2 : 1, tile);
+                    }
+                    else{
+                        piece = new PieceClass(isWhite ? 2 : 1, 63-tile);
+                    }
                     objectBoard.push(piece);
-                    piece.drawSelf(ctx, sprites);
                     tile+=1;
                 }
             }
         }
+        if(assignedTeam==2){
+            objectBoard.reverse();
+        }
+        for(let i=0; i< objectBoard.length; i++){
+            if(objectBoard[i]!=null){
+                objectBoard[i].drawSelf(ctx, sprites);
+            }
+        }
         console.log(objectBoard);
+        console.log(assignedTeam);
         }
     });
 
