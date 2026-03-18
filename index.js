@@ -197,13 +197,12 @@ class Knight{
       console.log(stringBoard);
 
       if(doesCreatorGoFirst==1){
-        io.to(data.creatorId).emit("ReturnBoard", 1, stringBoard);
-        io.to(data.joinerId).emit("ReturnBoard", 2, stringBoard);
+        io.to(data.creatorId).emit("ReturnBoard", {team: 1, isMyTurn: true, stringBoard: stringBoard});
+        io.to(data.joinerId).emit("ReturnBoard", {team: 2, isMyTurn: false, stringBoard: stringBoard});
       }
       else if(doesCreatorGoFirst==0){
-
-        io.to(data.creatorId).emit("ReturnBoard", 2, stringBoard);
-        io.to(data.joinerId).emit("ReturnBoard", 1, stringBoard);
+        io.to(data.creatorId).emit("ReturnBoard", {team: 2, isMyTurn: false, stringBoard: stringBoard});
+        io.to(data.joinerId).emit("ReturnBoard", {team: 1, isMyTurn: true, stringBoard: stringBoard});
       }
 
       socket.emit('returnJoinResult', true);

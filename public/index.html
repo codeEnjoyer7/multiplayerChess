@@ -51,21 +51,18 @@
         }
     });
     
-    socket.on('ReturnBoard', (assignedTeam, stringBoard) => {
-
+    socket.on('ReturnBoard', (data) => {
+    console.log("Team Number:", data.team); // Receives 1 or 2
+    console.log("Is My Turn:", data.isMyTurn);      // Receives true or false
+    console.log("Board String:", data.stringBoard); // Receives the FEN string
+    let stringBoard = data.stringBoard;
+    let assignedTeam=data.team;
+    let isMyTurn = data.isMyTurn;
         let c = document.getElementById("chessBoard")
         let ctx = c.getContext("2d");
         const sprites = new Image();
         sprites.src="betterSpriteSheet.png"
         sprites.onload= () => {
-
-        const colors = ["#eeeed2", "#769656"]; // Clean hex codes
-        for (let r = 0; r < 8; r++) {
-            for (let c = 0; c < 8; c++) {
-                ctx.fillStyle = colors[(r + c) & 1];
-                ctx.fillRect(c*64, r*64, 64, 64);
-                }
-        }
 
         class King{
             constructor(team, tile){
@@ -183,6 +180,10 @@
                     ctx.drawImage(sprites,837,165,161,155,(this.tile% 8)*64,Math.floor(this.tile/8)*64,64,64); //black pawn
                 }
             }
+
+            move(){
+            }
+
         }
         
         //TODO: convert FEN string back to array of chess pieces
@@ -225,6 +226,35 @@
         if(assignedTeam==2){
             objectBoard.reverse();
         }
+
+        const colors = ["#eeeed2", "#769656"]; // Clean hex codes
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                ctx.fillStyle = colors[(r + c) & 1];
+                ctx.fillRect(c*64, r*64, 64, 64);
+                }
+        }
+        
+        let currentlySelectedPiece;
+        c.addEventListener('click', function(event) { // runs code if the canvas (chess board) is clicked
+            const rect = c.getBoundingClientRect()
+            if(currentlySelectedPiece!=null){ //if statement checks if a piece is already selected, if yes, it unhighlights the tile and redraws the piece
+                let index = currentlySelectedPiece.tile;
+                let r = Math.floor(index /8);
+                let c = index % 8;
+                ctx.fillStyle = colors[(r + c) & 1];
+                ctx.fillRect(c*64,r*64,64,64)
+                currentlySelectedPiece.drawSelf(ctx, sprites);
+            }
+            let proposedPiece=objectBoard[(((event.clientX-rect.left)-(event.clientX-rect.left)%64)+((event.clientY-rect.top)-(event.clientY-rect.top)%64)*8)/64];
+            if(isMyTurn==true && proposedPiece!=null && proposedPiece.team == assignedTeam){
+                ctx.fillStyle = "#baca44"
+                ctx.fillRect((proposedPiece.tile%8)*64,Math.floor(proposedPiece.tile/8)*64,64,64);
+                proposedPiece.drawSelf(ctx, sprites);
+                currentlySelectedPiece=proposedPiece; //store as the currently selected piece
+            }
+        })
+
         for(let i=0; i< objectBoard.length; i++){
             if(objectBoard[i]!=null){
                 objectBoard[i].drawSelf(ctx, sprites);
@@ -233,6 +263,7 @@
         console.log(objectBoard);
         console.log(assignedTeam);
         }
+
     });
 
 </script>
