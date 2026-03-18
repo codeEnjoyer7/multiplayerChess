@@ -13,7 +13,7 @@
         <h2>Play with a friend</h2>
 
     <label for="createRoomInput">Click Create Room for a code you can share with your friend.</label>
-    <input name="createRoomInput" type="submit" value="Create Room" onclick="CreateRoom()">
+    <input name="createRoomInput" id="createRoomInput" type="submit" value="Create Room" onclick="CreateRoom()">
     <p id="roomIdInformer"></p>
 
     <label for="roomCode">To join a friends game, enter the code they give you.</label>
@@ -65,10 +65,155 @@
                 ctx.fillRect(c*64, r*64, 64, 64);
                 }
         }
-        //TODO: convert FEN string back to array of chess pieces
-        for(let charIndex=0; charIndex<stringBoard.length; charIndex++){
-            console.log(stringBoard.charAt(charIndex));
+
+        class King{
+            constructor(team, tile){
+                this.team=team;
+                this.tile=tile;
+                this.symbol="k"
+            }
+            getTeam(){
+                return this.team;
+            }
+            drawSelf(){
+                if(this.team==1){
+                    ctx.drawImage(sprites,-5,-5,151,155,this.c*64,this.r*64,64,64); //white king
+                }
+                else if(this.team==2){
+                    ctx.drawImage(sprites,-5,161,151,155,this.c*64,this.r*64,64,64); //black king
+                }
+            }
         }
+
+        class Queen{
+            constructor(team, tile){
+                this.team=team;
+                this.tile=tile;
+                this.symbol="q"
+            }
+            getTeam(){
+                return this.team;
+            }
+            drawSelf(){
+                if(this.team==1){
+                    ctx.drawImage(sprites,161,-5,161,155,this.c*64,this.r*64,64,64); //white queen
+                }
+                else if(this.team==2){
+                    ctx.drawImage(sprites,161,165,161,155,this.c*64,this.r*64,64,64); //black queen
+                }
+            }
+        }
+
+        class Bishop{
+            constructor(team, tile){
+                this.team=team;
+                this.tile=tile;
+                this.symbol="b"
+            }
+            getTeam(){
+                return this.team;
+            }
+            drawSelf(){
+                if(this.team==1){
+                    ctx.drawImage(sprites,327,-5,161,155,this.c*64,this.r*64,64,64); //white bishop
+                }
+                else if(this.team==2){
+                    ctx.drawImage(sprites,327,165,161,155,this.c*64,this.r*64,64,64); //black bishop
+                }
+            }
+        }
+
+        class Knight{
+            constructor(team, tile){
+                this.team=team;
+                this.tile=tile;
+                this.symbol="n"
+            }
+            getTeam(){
+                return this.team;
+            }
+            drawSelf(){
+                if(this.team==1){
+                    ctx.drawImage(sprites,497,-5,161,155,this.c*64,this.r*64,64,64); //white pawn
+                }
+                else if(this.team==2){
+                    ctx.drawImage(sprites,497,165,161,155,this.c*64,this.r*64,64,64); //black pawn
+                }
+            }
+        }
+
+        class Rook{
+            constructor(team, tile,){
+                this.team=team;
+                this.tile=tile;
+                this.symbol="r"
+            }
+            getTeam(){
+                return this.team;
+            }
+            drawSelf(){
+                if(this.team==1){
+                    ctx.drawImage(sprites,669,-5,161,155,this.c*64,this.r*64,64,64); //white pawn
+                }
+                else if(this.team==2){
+                    ctx.drawImage(sprites,669,165,161,155,this.c*64,this.r*64,64,64); //black pawn
+                }
+            }
+        }
+
+
+        class Pawn{
+            constructor(team, tile){
+                this.team=team;
+                this.tile=tile;
+                this.symbol="p";
+            }
+
+            getTeam(){
+                return this.team;
+            }
+
+            drawSelf(){
+                if(this.team==1){
+                    ctx.drawImage(sprites,837,-5,161,155,this.c*64,this.r*64,64,64); //white pawn
+                }
+                else if(this.team==2){
+                    ctx.drawImage(sprites,837,165,161,155,this.c*64,this.r*64,64,64); //black pawn
+                }
+            }
+        }
+        
+        //TODO: convert FEN string back to array of chess pieces
+
+        const PIECE_CLASSES = {
+            'p' : Pawn,
+            'n' : Knight,
+            'b' : Bishop,
+            'r': Rook,
+            'q' : Queen,
+            'k' : King
+        }
+
+        let stringBoardNoSlashes = stringBoard.replaceAll("/", "")
+        let objectBoard =[];
+        let tile=0;
+        for (const char of stringBoardNoSlashes) {
+            if (/\d/.test(char)) { // checks if the character is a number
+                for(let i=0; i<Number(char); i++){
+                    objectBoard.push(null);
+                }
+                tile+=Number(char)
+            }
+            else{ //if the character is a symbol
+                const isWhite = char === char.toUpperCase()
+                const PieceClass = PIECE_CLASSES[char.toLowerCase()];
+                if (PieceClass){
+                    objectBoard.push(new PieceClass(isWhite ? 1 : 2, tile));
+                    tile+=1;
+                }
+            }
+        }
+        console.log(objectBoard);
 
     });
 
