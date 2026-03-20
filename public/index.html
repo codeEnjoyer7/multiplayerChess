@@ -223,19 +223,20 @@
                 if (PieceClass){
                     let piece;
                     if(assignedTeam==1){
-                        piece = new PieceClass(isWhite ? 2 : 1, tile);
+                        piece = new PieceClass(isWhite ? 2 : 1, 63-tile);
                     }
                     else{
-                        piece = new PieceClass(isWhite ? 2 : 1, 63-tile);
+                        piece = new PieceClass(isWhite ? 2 : 1, tile);
                     }
                     objectBoard.push(piece);
                     tile+=1;
                 }
             }
         }
-        if(assignedTeam==2){
+        if(assignedTeam==1){
             objectBoard.reverse();
         }
+        console.log(objectBoard);
 
 
         const colors = ["#eeeed2", "#769656"]; // Clean hex codes

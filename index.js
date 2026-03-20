@@ -21,7 +21,7 @@ const roomsData = new Map();
         constructor(team, tile){
             this.team=team;
             this.tile=tile;
-            this.symbol="k"
+            this.symbol="K"
         }
         getTeam(){
           return this.team;
@@ -32,7 +32,7 @@ const roomsData = new Map();
             constructor(team, tile){
                 this.team=team;
                 this.tile=tile;
-                this.symbol="q"
+                this.symbol="Q"
             }
         getTeam(){
           return this.team;
@@ -43,7 +43,7 @@ const roomsData = new Map();
         constructor(team, tile){
             this.team=team;
             this.tile=tile;
-            this.symbol="b"
+            this.symbol="B"
         }
         getTeam(){
           return this.team;
@@ -54,7 +54,7 @@ const roomsData = new Map();
         constructor(team, tile){
             this.team=team;
             this.tile=tile;
-            this.symbol="n"
+            this.symbol="N"
         }
         getTeam(){
           return this.team;
@@ -65,7 +65,7 @@ const roomsData = new Map();
         constructor(team, tile,){
             this.team=team;
             this.tile=tile;
-            this.symbol="r"
+            this.symbol="R"
         }
         getTeam(){
           return this.team;
@@ -77,7 +77,7 @@ const roomsData = new Map();
         constructor(team, tile){
             this.team=team;
             this.tile=tile;
-            this.symbol="p";
+            this.symbol="P";
             this.hasMoved=false;
         }
 
@@ -121,7 +121,7 @@ const roomsData = new Map();
             stringBoard+=board[tile].symbol;
           }
           else if(board[tile].getTeam()==2){
-            stringBoard+=board[tile].symbol.toUpperCase();
+            stringBoard+=board[tile].symbol.toLowerCase();
           }
 
         }
