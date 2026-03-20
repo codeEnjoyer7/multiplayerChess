@@ -28,7 +28,7 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
     const socket = io();
-    
+
     function CreateRoom(){
         socket.emit('CreateRoom', socket.id);
     }
@@ -52,9 +52,11 @@
     });
     
     socket.on('ReturnBoard', (data) => {
+    console.log("Room: ", data.room);
     console.log("Team Number:", data.team); // Receives 1 or 2
     console.log("Is My Turn:", data.isMyTurn);      // Receives true or false
     console.log("Board String:", data.stringBoard); // Receives the FEN string
+    let room = data.room;
     let stringBoard = data.stringBoard;
     let assignedTeam=data.team;
     let isMyTurn = data.isMyTurn;
@@ -109,9 +111,7 @@
                 this.tile=tile;
                 this.symbol="b"
             }
-            getTeam(){
-                return this.team;
-            }
+
             drawSelf(ctx, sprites){
                 if(this.team==1){
                     ctx.drawImage(sprites,327,-5,161,155,(this.tile% 8)*64,Math.floor(this.tile/8)*64,64,64); //white bishop
@@ -128,9 +128,7 @@
                 this.tile=tile;
                 this.symbol="n"
             }
-            getTeam(){
-                return this.team;
-            }
+
             drawSelf(ctx, sprites){
                 if(this.team==1){
                     ctx.drawImage(sprites,497,-5,161,155,(this.tile% 8)*64,Math.floor(this.tile/8)*64,64,64); //white pawn
@@ -147,9 +145,7 @@
                 this.tile=tile;
                 this.symbol="r"
             }
-            getTeam(){
-                return this.team;
-            }
+
             drawSelf(ctx, sprites){
                 if(this.team==1){
                     ctx.drawImage(sprites,669,-5,161,155,(this.tile% 8)*64,Math.floor(this.tile/8)*64,64,64); //white pawn
@@ -168,10 +164,6 @@
                 this.tile=tile;
                 this.symbol="p";
                 this.hasMoved=false;
-            }
-
-            getTeam(){
-                return this.team;
             }
 
             drawSelf(ctx, sprites){
@@ -275,9 +267,15 @@
                         let c = tile % 8;
                         ctx.fillStyle = colors[(r + c) & 1];
                         ctx.fillRect(c*64,r*64,64,64)
-
+                        if ((((event.clientX-rect.left)-(event.clientX-rect.left)%64)+((event.clientY-rect.top)-(event.clientY-rect.top)%64)*8)/64==tile){
+                            console.log("requesting room: ",room, "to move: ", currentlySelectedPiece.tile, "to: ", tile);
+                            socket.emit('requestMove', {room: room, fromTile: currentlySelectedPiece.tile, toTile: tile});
+                            
+                        }
                     }
             }
+
+
 
             if(isMyTurn==true && proposedTile!=null && proposedTile.team == assignedTeam){ //if it the players turn, they click a piece that is part of their team.
                 ctx.fillStyle = "#baca44"
@@ -292,10 +290,9 @@
                     console.log(tile);
                     let r = Math.floor(tile /8);
                     let c = tile % 8;
-                    console.log("c: ",c);
-                    console.log("r: ",r);
                     ctx.fillStyle="#660000";
                     ctx.fillRect(c*64,r*64,64,64);
+                    
                 }
 
             }
@@ -306,8 +303,6 @@
                 objectBoard[i].drawSelf(ctx, sprites);
             }
         }
-        console.log(objectBoard);
-        console.log(assignedTeam);
         }
 
     });

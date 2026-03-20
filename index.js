@@ -52,14 +52,6 @@ io.on('connection', (socket) => {
         getTeam(){
           return this.team;
         }
-        drawSelf(){
-            if(this.team==1){
-                ctx.drawImage(sprites,-5,-5,151,155,this.c*64,this.r*64,64,64); //white king
-            }
-            else if(this.team==2){
-                ctx.drawImage(sprites,-5,161,151,155,this.c*64,this.r*64,64,64); //black king
-            }
-        }
       }
 
       class Queen{
@@ -71,14 +63,6 @@ io.on('connection', (socket) => {
         getTeam(){
           return this.team;
         }
-            drawSelf(){
-                if(this.team==1){
-                    ctx.drawImage(sprites,161,-5,161,155,this.c*64,this.r*64,64,64); //white queen
-                }
-                else if(this.team==2){
-                    ctx.drawImage(sprites,161,165,161,155,this.c*64,this.r*64,64,64); //black queen
-                }
-            }
         }
 
     class Bishop{
@@ -90,17 +74,9 @@ io.on('connection', (socket) => {
         getTeam(){
           return this.team;
         }
-        drawSelf(){
-            if(this.team==1){
-                ctx.drawImage(sprites,327,-5,161,155,this.c*64,this.r*64,64,64); //white bishop
-            }
-            else if(this.team==2){
-                ctx.drawImage(sprites,327,165,161,155,this.c*64,this.r*64,64,64); //black bishop
-            }
-        }
     }
 
-class Knight{
+    class Knight{
         constructor(team, tile){
             this.team=team;
             this.tile=tile;
@@ -109,17 +85,9 @@ class Knight{
         getTeam(){
           return this.team;
         }
-        drawSelf(){
-            if(this.team==1){
-                ctx.drawImage(sprites,497,-5,161,155,this.c*64,this.r*64,64,64); //white pawn
-            }
-            else if(this.team==2){
-                ctx.drawImage(sprites,497,165,161,155,this.c*64,this.r*64,64,64); //black pawn
-            }
-        }
     }
 
-  class Rook{
+    class Rook{
         constructor(team, tile,){
             this.team=team;
             this.tile=tile;
@@ -127,14 +95,6 @@ class Knight{
         }
         getTeam(){
           return this.team;
-        }
-        drawSelf(){
-            if(this.team==1){
-                ctx.drawImage(sprites,669,-5,161,155,this.c*64,this.r*64,64,64); //white pawn
-            }
-            else if(this.team==2){
-                ctx.drawImage(sprites,669,165,161,155,this.c*64,this.r*64,64,64); //black pawn
-            }
         }
     }
 
@@ -149,15 +109,6 @@ class Knight{
         getTeam(){
           return this.team;
         }
-
-        drawSelf(){
-            if(this.team==1){
-                ctx.drawImage(sprites,837,-5,161,155,this.c*64,this.r*64,64,64); //white pawn
-            }
-            else if(this.team==2){
-                ctx.drawImage(sprites,837,165,161,155,this.c*64,this.r*64,64,64); //black pawn
-            }
-        }
     }
 
       let doesCreatorGoFirst = Math.floor(Math.random() * 2);
@@ -168,7 +119,6 @@ class Knight{
       for(let tile=0; tile<64; tile++){
         if(board[tile]==null){
           emptySquares+=1;
-          console.log(emptySquares);
           if(emptySquares==8){
               stringBoard+=emptySquares;
               emptySquares=0;
@@ -194,15 +144,15 @@ class Knight{
         }
       }
       stringBoard=stringBoard.slice(0,-1);
-      console.log(stringBoard);
-
+      //console.log(arg);
+      
       if(doesCreatorGoFirst==1){
-        io.to(data.creatorId).emit("ReturnBoard", {team: 1, isMyTurn: true, stringBoard: stringBoard});
-        io.to(data.joinerId).emit("ReturnBoard", {team: 2, isMyTurn: false, stringBoard: stringBoard});
+        io.to(data.creatorId).emit("ReturnBoard", {room: arg.roomId,team: 1, isMyTurn: true, stringBoard: stringBoard});
+        io.to(data.joinerId).emit("ReturnBoard", {room: arg.roomId,team: 2, isMyTurn: false, stringBoard: stringBoard});
       }
       else if(doesCreatorGoFirst==0){
-        io.to(data.creatorId).emit("ReturnBoard", {team: 2, isMyTurn: false, stringBoard: stringBoard});
-        io.to(data.joinerId).emit("ReturnBoard", {team: 1, isMyTurn: true, stringBoard: stringBoard});
+        io.to(data.creatorId).emit("ReturnBoard", {room: arg.roomId, team: 2, isMyTurn: false, stringBoard: stringBoard});
+        io.to(data.joinerId).emit("ReturnBoard", {room: arg.roomId, team: 1, isMyTurn: true, stringBoard: stringBoard});
       }
 
       socket.emit('returnJoinResult', true);
@@ -210,6 +160,10 @@ class Knight{
     else{
       socket.emit('returnJoinResult', false);
     }
+  });
+
+  socket.on("requestMove", (arg, callback) =>{
+    console.log(arg);
   });
 
 });
