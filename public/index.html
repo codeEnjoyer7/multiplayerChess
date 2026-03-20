@@ -269,7 +269,7 @@
                         ctx.fillRect(c*64,r*64,64,64)
                         if ((((event.clientX-rect.left)-(event.clientX-rect.left)%64)+((event.clientY-rect.top)-(event.clientY-rect.top)%64)*8)/64==tile){
                             console.log("requesting room: ",room, "to move: ", currentlySelectedPiece.tile, "to: ", tile);
-                            socket.emit('requestMove', {room: room, fromTile: currentlySelectedPiece.tile, toTile: tile});
+                            socket.emit('requestMove', {roomId: room, fromTile: currentlySelectedPiece.tile, toTile: tile});
                             
                         }
                     }
