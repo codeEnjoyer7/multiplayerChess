@@ -87,16 +87,50 @@ const roomsData = new Map();
 
         getMoves(board){
           let availableMoves=[]
-          console.log("tile: ",this.tile);
           if(board[this.tile-8]==null){
             availableMoves.push(this.tile-8)
             if(board[this.tile-16]==null && this.hasMoved==false){
               availableMoves.push(this.tile-16)
             }
           }
-          console.log("available moves: ", availableMoves);
           return availableMoves;
         }
+    }
+
+    function boardToString(roomId){
+      let data = roomsData.get(roomId);
+      let board=data.board;
+      let stringBoard ="";
+      let emptySquares=0;
+      for(let tile=0; tile<64; tile++){
+        if(board[tile]==null){
+          emptySquares+=1;
+          if(emptySquares==8){
+              stringBoard+=emptySquares;
+              emptySquares=0;
+          }
+        }
+          
+        else if(board[tile]!=null){
+          if(emptySquares>0){
+            stringBoard=stringBoard+emptySquares
+            emptySquares=0;
+          }
+
+          if(board[tile].getTeam()==1){
+            stringBoard+=board[tile].symbol;
+          }
+          else if(board[tile].getTeam()==2){
+            stringBoard+=board[tile].symbol.toUpperCase();
+          }
+
+        }
+        if((tile+1)%8==0){
+          stringBoard+="/"
+        }
+      }
+        stringBoard=stringBoard.slice(0,-1);
+        return stringBoard;
     }
 
 io.on('connection', (socket) => {
@@ -130,40 +164,9 @@ io.on('connection', (socket) => {
       data = roomsData.get(arg.roomId);
       //server-side game logic goes below here?
 
-      let board=data.board;
+      let stringBoard=boardToString(arg.roomId);
+      console.log(stringBoard);
 
-      let stringBoard ="";
-      let emptySquares=0;
-      for(let tile=0; tile<64; tile++){
-        if(board[tile]==null){
-          emptySquares+=1;
-          if(emptySquares==8){
-              stringBoard+=emptySquares;
-              emptySquares=0;
-          }
-        }
-          
-        else if(board[tile]!=null){
-          if(emptySquares>0){
-            stringBoard=stringBoard+emptySquares
-            emptySquares=0;
-          }
-
-          if(board[tile].getTeam()==1){
-            stringBoard+=board[tile].symbol;
-          }
-          else if(board[tile].getTeam()==2){
-            stringBoard+=board[tile].symbol.toUpperCase();
-          }
-
-        }
-        if((tile+1)%8==0){
-          stringBoard+="/"
-        }
-      }
-      stringBoard=stringBoard.slice(0,-1);
-      //console.log(arg);
-      console.log(data.isCreatorFirst)
       if(data.isCreatorFirst==1){
         io.to(data.creatorId).emit("ReturnBoard", {room: arg.roomId,team: 1, isMyTurn: true, stringBoard: stringBoard});
         io.to(data.joinerId).emit("ReturnBoard", {room: arg.roomId,team: 2, isMyTurn: false, stringBoard: stringBoard});
@@ -181,11 +184,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on("requestMove", (arg, callback) =>{
-    console.log(arg);
     let data = roomsData.get(arg.roomId);
-    console.log(data.board[arg.fromTile]);
-    console.log(data.board[arg.fromTile].getMoves(data.board).includes(arg.toTile));
-
     if(data.board[arg.fromTile].getMoves(data.board).includes(arg.toTile)){ //if it is a valid move
       if(socket.id == data.creatorId && (data.isCreatorFirst && data.currentTurn%2==1) || (!data.isCreatorFirst && data.currentTurn%2==0)){//if its whites turn and they sent a request
         console.log("CREATOR REQUEST VALID")
