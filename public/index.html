@@ -180,9 +180,15 @@
                 let availableMoves=[]
                 if(board[this.tile-8]==null){
                     availableMoves.push(this.tile-8)
-                    if(board[this.tile-16]==null && this.hasMoved==false){
+                    if(board[this.tile-16]==null && Math.floor(this.tile/8)==6){
                         availableMoves.push(this.tile-16)
                     }
+                }
+                if(board[this.tile-7]!=null && board[this.tile-7].team!=this.team){
+                    availableMoves.push(this.tile-7)
+                }
+                if(board[this.tile-9]!=null && board[this.tile-9].team!=this.team){
+                    availableMoves.push(this.tile-9)
                 }
                 console.log(availableMoves);
                 return availableMoves;

@@ -87,20 +87,34 @@ const roomsData = new Map();
 
         getMoves(board){
           let availableMoves=[]
+          console.log("row: ",Math.floor(this.tile/8));
           if(this.team==1){
             if(board[this.tile-8]==null){
               availableMoves.push(this.tile-8)
-              if(board[this.tile-16]==null && this.hasMoved==false){
+              if(board[this.tile-16]==null && Math.floor(this.tile/8)==6){
                 availableMoves.push(this.tile-16)
               }
+            }
+
+            if(board[this.tile-7]!=null && board[this.tile-7].team!=this.team){
+                    availableMoves.push(this.tile-7)
+            }
+            if(board[this.tile-9]!=null && board[this.tile-9].team!=this.team){
+              availableMoves.push(this.tile-9)
             }
           }
           else{
             if(board[this.tile+8]==null){
               availableMoves.push(this.tile+8)
-              if(board[this.tile+16]==null && this.hasMoved==false){
+              if(board[this.tile+16]==null && Math.floor(this.tile /8)==1){
                 availableMoves.push(this.tile+16)
               }
+            }
+            if(board[this.tile+7]!=null && board[this.tile+7].team!=this.team){
+              availableMoves.push(this.tile+7)
+            }
+            if(board[this.tile+9]!=null && board[this.tile+9].team!=this.team){
+              availableMoves.push(this.tile+9)
             }
           }
           return availableMoves;
@@ -195,10 +209,7 @@ io.on('connection', (socket) => {
   socket.on("requestMove", (arg, callback) =>{
     let data = roomsData.get(arg.roomId);
     if(data.board[arg.fromTile]!=null && data.board[arg.fromTile].getMoves(data.board).includes(arg.toTile)){ //if it is a valid move
-      console.log("is the creator first?", data.isCreatorFirst);
-      console.log("Socket id:", socket.id);
-      console.log("Creator id: ", data.creatorId);
-      console.log("Joiner id: ", data.joinerId);
+
       if(socket.id == data.creatorId && ((data.isCreatorFirst==0 && data.currentTurn%2==0) || (data.isCreatorFirst==1 && data.currentTurn%2==1))){//if its whites turn and they sent a request
         console.log("CREATOR REQUEST VALID")
         data.currentTurn+=1;
@@ -206,8 +217,6 @@ io.on('connection', (socket) => {
         data.board[arg.toTile]=data.board[arg.fromTile];
         data.board[arg.fromTile]=null;
         let stringBoard=boardToString(arg.roomId);
-        console.log("new board: ", stringBoard);
-        console.log("is creator first?: ", data.isCreatorFirst);
         if(data.isCreatorFirst==0){
           io.to(data.creatorId).emit("ReturnBoard", {room: arg.roomId, team: 1, currentTurn: data.currentTurn, stringBoard: stringBoard});
           io.to(data.joinerId).emit("ReturnBoard", {room: arg.roomId, team: 2, currentTurn: data.currentTurn, stringBoard: stringBoard});
