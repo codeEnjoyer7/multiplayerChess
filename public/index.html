@@ -54,12 +54,13 @@
     socket.on('ReturnBoard', (data) => {
     console.log("Room: ", data.room);
     console.log("Team Number:", data.team); // Receives 1 or 2
-    console.log("Is My Turn:", data.isMyTurn);      // Receives true or false
     console.log("Board String:", data.stringBoard); // Receives the FEN string
     let room = data.room;
     let stringBoard = data.stringBoard;
     let assignedTeam=data.team;
-    let isMyTurn = data.isMyTurn;
+    console.log("Current turn:", data.currentTurn);
+    let isMyTurn = data.team==data.currentTurn%2+1;
+    console.log("Is my turn?", isMyTurn);
         let c = document.getElementById("chessBoard")
         let ctx = c.getContext("2d");
         const sprites = new Image();
@@ -183,6 +184,7 @@
                         availableMoves.push(this.tile-16)
                     }
                 }
+                console.log(availableMoves);
                 return availableMoves;
                 //board[this.tile-8] = this;
                 //board[this.tile] = null;
@@ -206,38 +208,39 @@
             'q' : Queen,
             'k' : King
         }
-
-        let stringBoardNoSlashes = stringBoard.replaceAll("/", "")
         let objectBoard =[];
-        let tile=0;
-        for (const char of stringBoardNoSlashes) {
-            if (/\d/.test(char)) { // checks if the character is a number
-                for(let i=0; i<Number(char); i++){
-                    objectBoard.push(null);
-                }
-                tile+=Number(char)
-            }
-            else{ //if the character is a symbol
-                const isWhite = char === char.toUpperCase()
-                const PieceClass = PIECE_CLASSES[char.toLowerCase()];
-                if (PieceClass){
-                    let piece;
-                    if(assignedTeam==1){
-                        piece = new PieceClass(isWhite ? 2 : 1, 63-tile);
+        function stringToBoard(){
+            let stringBoardNoSlashes = stringBoard.replaceAll("/", "")
+            let tile=0;
+            for (const char of stringBoardNoSlashes) {
+                if (/\d/.test(char)) { // checks if the character is a number
+                    for(let i=0; i<Number(char); i++){
+                        objectBoard.push(null);
                     }
-                    else{
-                        piece = new PieceClass(isWhite ? 2 : 1, tile);
+                    tile+=Number(char)
+                }
+                else{ //if the character is a symbol
+                    const isWhite = char === char.toUpperCase()
+                    const PieceClass = PIECE_CLASSES[char.toLowerCase()];
+                    if (PieceClass){
+                        let piece;
+                        if(assignedTeam==1){
+                            piece = new PieceClass(isWhite ? 2 : 1, 63-tile);
+                        }
+                        else{
+                            piece = new PieceClass(isWhite ? 2 : 1, tile);
+                        }
+                        objectBoard.push(piece);
+                        tile+=1;
                     }
-                    objectBoard.push(piece);
-                    tile+=1;
                 }
             }
+            if(assignedTeam==1){
+                objectBoard.reverse();
+            }
+            console.log(objectBoard);
         }
-        if(assignedTeam==1){
-            objectBoard.reverse();
-        }
-        console.log(objectBoard);
-
+        stringToBoard();
 
         const colors = ["#eeeed2", "#769656"]; // Clean hex codes
         for (let r = 0; r < 8; r++) {
@@ -260,7 +263,8 @@
                 let c = index % 8;
                 ctx.fillStyle = colors[(r + c) & 1];
                 ctx.fillRect(c*64,r*64,64,64)
-                currentlySelectedPiece.drawSelf(ctx, sprites);
+                //currentlySelectedPiece.drawSelf(ctx, sprites);
+                console.log("NO TURNING BACK NOW");
                 availableMoves=currentlySelectedPiece.getMoves(objectBoard);
                     for(let i=0; i<availableMoves.length; i++){
                         let tile = availableMoves[i];
@@ -269,20 +273,32 @@
                         ctx.fillStyle = colors[(r + c) & 1];
                         ctx.fillRect(c*64,r*64,64,64)
                         if ((((event.clientX-rect.left)-(event.clientX-rect.left)%64)+((event.clientY-rect.top)-(event.clientY-rect.top)%64)*8)/64==tile){
-                            console.log("requesting room: ",room, "to move: ", currentlySelectedPiece.tile, "to: ", tile);
-                            socket.emit('requestMove', {roomId: room, fromTile: currentlySelectedPiece.tile, toTile: tile});
-                            
+                            if(assignedTeam==1){
+                            console.log("requesting room: ",room, "to move: ", currentlySelectedPiece.tile*-1+63, "to: ", tile*-1+63);
+                            }
+                            else{
+                                console.log("requesting room: ",room, "to move: ", currentlySelectedPiece.tile, "to: ", tile);
+                            }
+                            if(assignedTeam==1){
+                            socket.emit('requestMove', {roomId: room, fromTile: currentlySelectedPiece.tile*-1+63, toTile: tile*-1+63});
+                            }
+                            else{
+                                socket.emit('requestMove', {roomId: room, fromTile: currentlySelectedPiece.tile, toTile: tile});
+                            }
+                            console.log("currently selected: ",currentlySelectedPiece);
+                            objectBoard=stringToBoard();
+                            console.log("current piece: ", currentlySelectedPiece);
+                            objectBoard[currentlySelectedPiece.tile].drawSelf();
                         }
                     }
             }
 
 
-
+            console.log("Is my turn  test 2?", isMyTurn);
             if(isMyTurn==true && proposedTile!=null && proposedTile.team == assignedTeam){ //if it the players turn, they click a piece that is part of their team.
                 ctx.fillStyle = "#baca44"
                 ctx.fillRect((proposedTile.tile%8)*64,Math.floor(proposedTile.tile/8)*64,64,64);
                 proposedTile.drawSelf(ctx, sprites);
-                
                 currentlySelectedPiece=proposedTile; //stores the tile that was clicked as the currently selected piece
                 console.log(proposedTile.getMoves(objectBoard));
                 availableMoves=proposedTile.getMoves(objectBoard);
