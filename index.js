@@ -23,9 +23,6 @@ const roomsData = new Map();
             this.tile=tile;
             this.symbol="K"
         }
-        getTeam(){
-          return this.team;
-        }
       }
 
       class Queen{
@@ -34,9 +31,6 @@ const roomsData = new Map();
                 this.tile=tile;
                 this.symbol="Q"
             }
-        getTeam(){
-          return this.team;
-        }
         }
 
     class Bishop{
@@ -45,9 +39,6 @@ const roomsData = new Map();
             this.tile=tile;
             this.symbol="B"
         }
-        getTeam(){
-          return this.team;
-        }
     }
 
     class Knight{
@@ -55,10 +46,6 @@ const roomsData = new Map();
         this.team=team;
         this.tile=tile;
         this.symbol="N"
-      }
-
-      getTeam(){
-        return this.team;
       }
 
       getMoves(board){
@@ -99,9 +86,6 @@ const roomsData = new Map();
             this.tile=tile;
             this.symbol="R"
         }
-        getTeam(){
-          return this.team;
-        }
     }
 
 
@@ -111,10 +95,6 @@ const roomsData = new Map();
             this.tile=tile;
             this.symbol="P";
             this.hasMoved=false;
-        }
-
-        getTeam(){
-          return this.team;
         }
 
         getMoves(board){
@@ -173,10 +153,10 @@ const roomsData = new Map();
             emptySquares=0;
           }
 
-          if(board[tile].getTeam()==1){
+          if(board[tile].team==1){
             stringBoard+=board[tile].symbol;
           }
-          else if(board[tile].getTeam()==2){
+          else if(board[tile].team==2){
             stringBoard+=board[tile].symbol.toLowerCase();
           }
 
