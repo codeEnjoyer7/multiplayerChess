@@ -140,9 +140,13 @@ const roomsData = new Map();
                 let availableMoves=[];
                 let possibleTile=this.tile;
                 while(Math.floor((possibleTile)/8)!=0){
-                    if(board[possibleTile-8]==null || board[possibleTile-8].team!=this.team){
+                    if(board[possibleTile-8]==null){
                         availableMoves.push(possibleTile-8)
                         possibleTile-=8;
+                    }
+                    else if(board[possibleTile-8].team!=this.team){
+                        availableMoves.push(possibleTile-8);
+                        break;
                     }
                     else{
                         break;
@@ -152,9 +156,13 @@ const roomsData = new Map();
                 }
                 possibleTile=this.tile;
                 while(Math.floor((possibleTile)/8)!=7){
-                    if(board[possibleTile+8]==null || board[possibleTile+8].team!=this.team){
+                    if(board[possibleTile+8]==null){
                         availableMoves.push(possibleTile+8)
                         possibleTile+=8;
+                    }
+                    else if(board[possibleTile+8].team!=this.team){
+                        availableMoves.push(possibleTile+8);
+                        break;
                     }
                     else{
                         break;
@@ -162,9 +170,13 @@ const roomsData = new Map();
                 }
                 possibleTile=this.tile;
                 while(possibleTile%8!=0){
-                    if(board[possibleTile-1]==null || board[possibleTile-1].team!=this.team){
+                    if(board[possibleTile-1]==null){
                         availableMoves.push(possibleTile-1)
                         possibleTile-=1;
+                    }
+                    else if(board[possibleTile-1].team!=this.team){
+                        availableMoves.push(possibleTile-1);
+                        break;
                     }
                     else{
                         break;
@@ -175,6 +187,10 @@ const roomsData = new Map();
                     if(board[possibleTile+1]==null || board[possibleTile+1].team!=this.team){
                         availableMoves.push(possibleTile+1)
                         possibleTile+=1;
+                    }
+                    else if(board[possibleTile+1].team!=this.team){
+                        availableMoves.push(possibleTile+1);
+                        break;
                     }
                     else{
                         break;
