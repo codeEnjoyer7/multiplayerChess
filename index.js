@@ -135,6 +135,54 @@ const roomsData = new Map();
             this.tile=tile;
             this.symbol="R"
         }
+
+        getMoves(board){
+                let availableMoves=[];
+                let possibleTile=this.tile;
+                while(Math.floor((possibleTile)/8)!=0){
+                    if(board[possibleTile-8]==null || board[possibleTile-8].team!=this.team){
+                        availableMoves.push(possibleTile-8)
+                        possibleTile-=8;
+                    }
+                    else{
+                        break;
+                    }
+                    console.log("availableMoves", availableMoves);
+                    console.log("this tile:", this.tile);
+                }
+                possibleTile=this.tile;
+                while(Math.floor((possibleTile)/8)!=7){
+                    if(board[possibleTile+8]==null || board[possibleTile+8].team!=this.team){
+                        availableMoves.push(possibleTile+8)
+                        possibleTile+=8;
+                    }
+                    else{
+                        break;
+                    }
+                }
+                possibleTile=this.tile;
+                while(possibleTile%8!=0){
+                    if(board[possibleTile-1]==null || board[possibleTile-1].team!=this.team){
+                        availableMoves.push(possibleTile-1)
+                        possibleTile-=1;
+                    }
+                    else{
+                        break;
+                    }
+                }
+                possibleTile=this.tile;
+                while(possibleTile%8!=7){
+                    if(board[possibleTile+1]==null || board[possibleTile+1].team!=this.team){
+                        availableMoves.push(possibleTile+1)
+                        possibleTile+=1;
+                    }
+                    else{
+                        break;
+                    }
+                }
+                return availableMoves;
+            }
+
     }
 
 
@@ -182,41 +230,34 @@ const roomsData = new Map();
         }
     }
 
-    function boardToString(roomId){
-      let data = roomsData.get(roomId);
-      let board=data.board;
-      let stringBoard ="";
-      let emptySquares=0;
-      for(let tile=0; tile<64; tile++){
-        if(board[tile]==null){
-          emptySquares+=1;
-          if(emptySquares==8){
-              stringBoard+=emptySquares;
-              emptySquares=0;
-          }
-        }
-          
-        else if(board[tile]!=null){
-          if(emptySquares>0){
-            stringBoard=stringBoard+emptySquares
-            emptySquares=0;
-          }
+  function boardToString(roomId) {
+    let data = roomsData.get(roomId);
+    let board = data.board;
+    let stringBoard = "";
+    let emptySquares = 0;
 
-          if(board[tile].team==1){
-            stringBoard+=board[tile].symbol;
-          }
-          else if(board[tile].team==2){
-            stringBoard+=board[tile].symbol.toLowerCase();
-          }
-
-        }
-        if((tile+1)%8==0){
-          stringBoard+="/"
-        }
+    for (let tile = 0; tile < 64; tile++) {
+      let piece = board[tile];
+      if (piece == null) {
+        emptySquares++;
+      } else {
+      if (emptySquares > 0) {
+        stringBoard += emptySquares;
+        emptySquares = 0;
       }
-        stringBoard=stringBoard.slice(0,-1);
-        return stringBoard;
+      stringBoard += (piece.team === 1) ? piece.symbol.toUpperCase() : piece.symbol.toLowerCase();
     }
+    if ((tile + 1) % 8 === 0) {
+      if (emptySquares > 0) {
+        stringBoard += emptySquares;
+        emptySquares = 0;
+      }
+      if (tile < 63) stringBoard += "/";
+    }
+  }
+
+  return stringBoard;
+}
 
 io.on('connection', (socket) => {
 
