@@ -51,14 +51,46 @@ const roomsData = new Map();
     }
 
     class Knight{
-        constructor(team, tile){
-            this.team=team;
-            this.tile=tile;
-            this.symbol="N"
+      constructor(team, tile){
+        this.team=team;
+        this.tile=tile;
+        this.symbol="N"
+      }
+
+      getTeam(){
+        return this.team;
+      }
+
+      getMoves(board){
+        let availableMoves=[];
+        console.log(this.tile);
+        if(board[this.tile+15]== null || board[this.tile+15].team!=this.team){
+          availableMoves.push(this.tile+15);
         }
-        getTeam(){
-          return this.team;
+        if(board[this.tile-15]== null || board[this.tile-15].team!=this.team){
+          availableMoves.push(this.tile-15);
         }
+        if(board[this.tile+17]== null || board[this.tile+17].team!=this.team){
+          availableMoves.push(this.tile+17);
+        }
+        if(board[this.tile-17]== null || board[this.tile-17].team!=this.team){
+          availableMoves.push(this.tile-17);
+        }
+        if(board[this.tile-6]== null || board[this.tile-6].team!=this.team){
+          availableMoves.push(this.tile-6);
+        }
+        if(board[this.tile+6]== null || board[this.tile+6].team!=this.team){
+          availableMoves.push(this.tile+6);
+        }
+        if(board[this.tile+10]== null || board[this.tile+10].team!=this.team){
+          availableMoves.push(this.tile+10);
+        }
+        if(board[this.tile-10]== null || board[this.tile-10].team!=this.team){
+          availableMoves.push(this.tile-10);
+        }
+        console.log(availableMoves);
+        return availableMoves;
+      }
     }
 
     class Rook{
@@ -208,8 +240,9 @@ io.on('connection', (socket) => {
 
   socket.on("requestMove", (arg, callback) =>{
     let data = roomsData.get(arg.roomId);
+    console.log("MOVE REQUESTED");
+    console.log("available moves", data.board[arg.fromTile].getMoves(data.board));
     if(data.board[arg.fromTile]!=null && data.board[arg.fromTile].getMoves(data.board).includes(arg.toTile)){ //if it is a valid move
-
       if(socket.id == data.creatorId && ((data.isCreatorFirst==0 && data.currentTurn%2==0) || (data.isCreatorFirst==1 && data.currentTurn%2==1))){//if its whites turn and they sent a request
         console.log("CREATOR REQUEST VALID")
         data.currentTurn+=1;

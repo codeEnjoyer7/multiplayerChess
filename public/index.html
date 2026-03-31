@@ -138,6 +138,37 @@
                     ctx.drawImage(sprites,497,165,161,155,(this.tile% 8)*64,Math.floor(this.tile/8)*64,64,64); //black pawn
                 }
             }
+
+            getMoves(board){
+                let availableMoves=[];
+                console.log(this.tile);
+                if(board[this.tile+15]== null || board[this.tile+15].team!=this.team){
+                    availableMoves.push(this.tile+15);
+                }
+                if(board[this.tile-15]== null || board[this.tile-15].team!=this.team){
+                    availableMoves.push(this.tile-15);
+                }
+                if(board[this.tile+17]== null || board[this.tile+17].team!=this.team){
+                    availableMoves.push(this.tile+17);
+                }
+                if(board[this.tile-17]== null || board[this.tile-17].team!=this.team){
+                    availableMoves.push(this.tile-17);
+                }
+                if(board[this.tile-6]== null || board[this.tile-6].team!=this.team){
+                    availableMoves.push(this.tile-6);
+                }
+                if(board[this.tile+6]== null || board[this.tile+6].team!=this.team){
+                    availableMoves.push(this.tile+6);
+                }
+                if(board[this.tile+10]== null || board[this.tile+10].team!=this.team){
+                    availableMoves.push(this.tile+10);
+                }
+                if(board[this.tile-10]== null || board[this.tile-10].team!=this.team){
+                    availableMoves.push(this.tile-10);
+                }
+                console.log(availableMoves);
+                return availableMoves;
+            }
         }
 
         class Rook{
@@ -280,7 +311,7 @@
                         ctx.fillRect(c*64,r*64,64,64)
                         if ((((event.clientX-rect.left)-(event.clientX-rect.left)%64)+((event.clientY-rect.top)-(event.clientY-rect.top)%64)*8)/64==tile){
                             if(assignedTeam==1){
-                            console.log("requesting room: ",room, "to move: ", currentlySelectedPiece.tile*-1+63, "to: ", tile*-1+63);
+                            console.log("TEST requesting room: ",room, "to move: ", currentlySelectedPiece.tile, "to: ", tile);
                             }
                             else{
                                 console.log("requesting room: ",room, "to move: ", currentlySelectedPiece.tile, "to: ", tile);
