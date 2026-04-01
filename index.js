@@ -425,7 +425,7 @@ io.on('connection', (socket) => {
     roomsData.set(roomId, {
       creatorId: arg,
       isCreatorFirst : isCreatorFirst,
-      board : [new Rook(2,0), new Knight(2,1), new Bishop(2,2), new Queen(2,3), new King(2,4), new Bishop(2,5), new Knight(2,6), new Rook(2,7), new Pawn(2,8), new Pawn(2,9), new Pawn(2,10), new Pawn(2,11), new Pawn(2,12),new Pawn(2,13), new Pawn(2,14), new Pawn(2,15), null,null,null,null,null,null,null,null, null,null,null,null,null,null,null,null, null,null,null,null,null,null,null,null, null,null,null,null,null,null,null,null, new Pawn(1,48), new Pawn(1,49), new Pawn(1,50), new Pawn(1,51), new Pawn(1,52),new Pawn(1,53), new Pawn(1,54), new Pawn(1,55), new Rook(1,56), new Knight(1,57), new Bishop(1,58), new Queen(1,59), new King(1,60), new Bishop(1,61), new Knight(1,62), new Rook(1,63)]
+      board : [new Rook(2,0), new Knight(2,1), new Bishop(2,2), new King(2,3), new Queen(2,4), new Bishop(2,5), new Knight(2,6), new Rook(2,7), new Pawn(2,8), new Pawn(2,9), new Pawn(2,10), new Pawn(2,11), new Pawn(2,12),new Pawn(2,13), new Pawn(2,14), new Pawn(2,15), null,null,null,null,null,null,null,null, null,null,null,null,null,null,null,null, null,null,null,null,null,null,null,null, null,null,null,null,null,null,null,null, new Pawn(1,48), new Pawn(1,49), new Pawn(1,50), new Pawn(1,51), new Pawn(1,52),new Pawn(1,53), new Pawn(1,54), new Pawn(1,55), new Rook(1,56), new Knight(1,57), new Bishop(1,58), new King(1,59), new Queen(1,60), new Bishop(1,61), new Knight(1,62), new Rook(1,63)]
     });
 
     socket.emit('returnRoomId', roomId);
