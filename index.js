@@ -31,6 +31,127 @@ const roomsData = new Map();
                 this.tile=tile;
                 this.symbol="Q"
             }
+
+            getMoves(board){
+                let availableMoves=[];
+                let possibleTile=this.tile;
+                while(Math.floor((possibleTile)/8)!=0){
+                    if(board[possibleTile-8]==null){
+                        availableMoves.push(possibleTile-8)
+                        possibleTile-=8;
+                    }
+                    else if(board[possibleTile-8].team!=this.team){
+                        availableMoves.push(possibleTile-8);
+                        break;
+                    }
+                    else{
+                        break;
+                    }
+                    console.log("availableMoves", availableMoves);
+                    console.log("this tile:", this.tile);
+                }
+                possibleTile=this.tile;
+                while(Math.floor((possibleTile)/8)!=7){
+                    if(board[possibleTile+8]==null){
+                        availableMoves.push(possibleTile+8)
+                        possibleTile+=8;
+                    }
+                    else if(board[possibleTile+8].team!=this.team){
+                        availableMoves.push(possibleTile+8);
+                        break;
+                    }
+                    else{
+                        break;
+                    }
+                }
+                possibleTile=this.tile;
+                while(possibleTile%8!=0){
+                    if(board[possibleTile-1]==null){
+                        availableMoves.push(possibleTile-1)
+                        possibleTile-=1;
+                    }
+                    else if(board[possibleTile-1].team!=this.team){
+                        availableMoves.push(possibleTile-1);
+                        break;
+                    }
+                    else{
+                        break;
+                    }
+                }
+                possibleTile=this.tile;
+                while(possibleTile%8!=7){
+                    if(board[possibleTile+1]==null || board[possibleTile+1].team!=this.team){
+                        availableMoves.push(possibleTile+1)
+                        possibleTile+=1;
+                    }
+                    else if(board[possibleTile+1].team!=this.team){
+                        availableMoves.push(possibleTile+1);
+                        break;
+                    }
+                    else{
+                        break;
+                    }
+                }
+
+                possibleTile=this.tile;
+                while(possibleTile%8!=0){
+                    if(board[possibleTile-9]==null){
+                        availableMoves.push(possibleTile-9);
+                        possibleTile-=9;
+                    }
+                    else if(board[possibleTile-9].team!=this.team){
+                      availableMoves.push(possibleTile-9);
+                      break;
+                    }
+                    else{
+                        break;
+                    }
+                }
+                possibleTile=this.tile;
+                while((possibleTile+9)%8!=0){
+                    if(board[possibleTile+9]==null){
+                        availableMoves.push(possibleTile+9);
+                        possibleTile+=9;
+                    }
+                    else if(board[possibleTile+9].team!=this.team){
+                      availableMoves.push(possibleTile+9);
+                      break;
+                    }
+                    else{
+                        break;
+                    }
+                }
+                possibleTile=this.tile;
+                while((possibleTile-7)%8!=0){
+                    if(board[possibleTile-7]==null){
+                        availableMoves.push(possibleTile-7);
+                        possibleTile-=7;
+                    }
+                    else if(board[possibleTile-7].team!=this.team){
+                      availableMoves.push(possibleTile-7);
+                      break;
+                    }
+                    else{
+                        break;
+                    }
+                }
+                possibleTile=this.tile;
+                while((possibleTile+7)%8!=7){
+                    if(board[possibleTile+7]==null){
+                        availableMoves.push(possibleTile+7);
+                        possibleTile+=7;
+                    }
+                    else if(board[possibleTile+7].team!=this.team){
+                      availableMoves.push(possibleTile+7);
+                      break;
+                    }
+                    else{
+                        break;
+                    }
+                }
+                return availableMoves;
+            }
+
         }
 
     class Bishop{
@@ -57,7 +178,7 @@ const roomsData = new Map();
                     }
                 }
                 possibleTile=this.tile;
-                while((possibleTile+9)%8!=0){
+                while((possibleTile+9)%8!=7){
                     if(board[possibleTile+9]==null){
                         availableMoves.push(possibleTile+9);
                         possibleTile+=9;
