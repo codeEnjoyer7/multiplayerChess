@@ -23,6 +23,24 @@ const roomsData = new Map();
             this.tile=tile;
             this.symbol="K"
         }
+
+        getMoves(board){
+          let availableMoves=[]
+          const offsets =[
+                    {offset: 8, colDifference: 0}, {offset: -8, colDifference: 0},
+                    {offset: 9, colDifference: 1}, {offset: -9, colDifference: -1},
+                    {offset: 7, colDifference: -1}, {offset: -7, colDifference: 1},
+                    {offset: 1, colDifference: 1}, {offset: -1, colDifference: -1}
+                ]
+                for(let i=0; i<offsets.length; i++){
+                  if(board[this.tile+offsets[i].offset]==null || board[this.tile+offsets[i].offset].team!=this.team){
+                    if((this.tile+offsets[i].offset)%8-this.tile%8==offsets[i].colDifference){
+                      availableMoves.push(this.tile+offsets[i].offset)  
+                    }
+                  }
+                }
+          return availableMoves;
+        }
       }
 
       class Queen{
@@ -395,7 +413,6 @@ const roomsData = new Map();
       if (tile < 63) stringBoard += "/";
     }
   }
-
   return stringBoard;
 }
 
@@ -448,46 +465,29 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on("requestMove", (arg, callback) =>{
-    let data = roomsData.get(arg.roomId);
-    console.log("MOVE REQUESTED");
-    console.log("available moves", data.board[arg.fromTile].getMoves(data.board));
-    if(data.board[arg.fromTile]!=null && data.board[arg.fromTile].getMoves(data.board).includes(arg.toTile)){ //if it is a valid move
-      if(socket.id == data.creatorId && ((data.isCreatorFirst==0 && data.currentTurn%2==0) || (data.isCreatorFirst==1 && data.currentTurn%2==1))){//if its whites turn and they sent a request
-        console.log("CREATOR REQUEST VALID")
-        data.currentTurn+=1;
-        data.board[arg.fromTile].tile=arg.toTile;
-        data.board[arg.toTile]=data.board[arg.fromTile];
-        data.board[arg.fromTile]=null;
-        let stringBoard=boardToString(arg.roomId);
-        if(data.isCreatorFirst==0){
-          io.to(data.creatorId).emit("ReturnBoard", {room: arg.roomId, team: 1, currentTurn: data.currentTurn, stringBoard: stringBoard});
-          io.to(data.joinerId).emit("ReturnBoard", {room: arg.roomId, team: 2, currentTurn: data.currentTurn, stringBoard: stringBoard});
-        }
-        else{
-            io.to(data.creatorId).emit("ReturnBoard", {room: arg.roomId,team: 2, currentTurn: data.currentTurn, stringBoard: stringBoard});
-          io.to(data.joinerId).emit("ReturnBoard", {room: arg.roomId,team: 1, currentTurn: data.currentTurn, stringBoard: stringBoard});
-        }
-      }
-      else if(socket.id == data.joinerId && ((data.isCreatorFirst==1 && data.currentTurn%2==0) ||(data.isCreatorFirst==0 && data.currentTurn%2==1))){//if its blacks turn and they sent a request
-        console.log("JOINER REQUEST VALID")
-        data.currentTurn+=1;
-        data.board[arg.fromTile].tile=arg.toTile;
-        data.board[arg.toTile]=data.board[arg.fromTile];
-        data.board[arg.fromTile]=null;
-        stringBoard=boardToString(arg.roomId);
-        console.log("new board: ", stringBoard);
-        if(data.isCreatorFirst==0){
-          io.to(data.creatorId).emit("ReturnBoard", {room: arg.roomId, team: 1, currentTurn: data.currentTurn, stringBoard: stringBoard});
-          io.to(data.joinerId).emit("ReturnBoard", {room: arg.roomId, team: 2, currentTurn: data.currentTurn, stringBoard: stringBoard});
-        }
-        else{
-            io.to(data.creatorId).emit("ReturnBoard", {room: arg.roomId,team: 2, currentTurn: data.currentTurn, stringBoard: stringBoard});
-          io.to(data.joinerId).emit("ReturnBoard", {room: arg.roomId,team: 1, currentTurn: data.currentTurn, stringBoard: stringBoard});
-        }
-      }
+  socket.on("requestMove", (arg, callback) => {
+    const data = roomsData.get(arg.roomId);
+    const piece = data?.board[arg.fromTile];
+
+    // 1. Unified Turn Validation
+    const validCreatorMove = socket.id === data.creatorId && (data.currentTurn % 2 === (data.isCreatorFirst === 0 ? 0 : 1));
+    const validJoinerMove = socket.id === data.joinerId && (data.currentTurn % 2 === (data.isCreatorFirst === 1 ? 0 : 1));
+    if (piece && piece.getMoves(data.board).includes(arg.toTile) && (validCreatorMove || validJoinerMove)) {
+        // 2. Shared Update Logic
+        data.currentTurn++;
+        piece.tile = arg.toTile;
+        data.board[arg.toTile] = piece;
+        data.board[arg.fromTile] = null;
+        const stringBoard = boardToString(arg.roomId);
+        const teamForCreator = data.isCreatorFirst === 0 ? 1 : 2;
+        const teamForJoiner = teamForCreator === 1 ? 2 : 1;
+        // 3. Shared Emission Logic
+        const payload = { room: arg.roomId, currentTurn: data.currentTurn, stringBoard };
+        io.to(data.creatorId).emit("ReturnBoard", { ...payload, team: teamForCreator });
+        io.to(data.joinerId).emit("ReturnBoard", { ...payload, team: teamForJoiner });
+        console.log(`${validCreatorMove ? "CREATOR" : "JOINER"} REQUEST VALID`);
     }
-  });
+});
 
 });
 
