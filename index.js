@@ -112,35 +112,24 @@ const roomsData = new Map();
       }
 
       getMoves(board){
-        let availableMoves=[];
-        console.log(this.tile);
-        if(board[this.tile+15]== null || board[this.tile+15].team!=this.team){
-          availableMoves.push(this.tile+15);
-        }
-        if(board[this.tile-15]== null || board[this.tile-15].team!=this.team){
-          availableMoves.push(this.tile-15);
-        }
-        if(board[this.tile+17]== null || board[this.tile+17].team!=this.team){
-          availableMoves.push(this.tile+17);
-        }
-        if(board[this.tile-17]== null || board[this.tile-17].team!=this.team){
-          availableMoves.push(this.tile-17);
-        }
-        if(board[this.tile-6]== null || board[this.tile-6].team!=this.team){
-          availableMoves.push(this.tile-6);
-        }
-        if(board[this.tile+6]== null || board[this.tile+6].team!=this.team){
-          availableMoves.push(this.tile+6);
-        }
-        if(board[this.tile+10]== null || board[this.tile+10].team!=this.team){
-          availableMoves.push(this.tile+10);
-        }
-        if(board[this.tile-10]== null || board[this.tile-10].team!=this.team){
-          availableMoves.push(this.tile-10);
-        }
-        console.log(availableMoves);
-        return availableMoves;
-      }
+                let availableMoves=[];
+                console.log(this.tile);
+                const offsets =[
+                    {offset: 15, colDifference:-1}, {offset: -15, colDifference:1},
+                    {offset: 17, colDifference:1}, {offset: -17, colDifference:-1},
+                    {offset: 6, colDifference:-2}, {offset: -6, colDifference:2},
+                    {offset: 10, colDifference:2}, {offset: -10, colDifference:-2}
+                ]
+                for(let i=0; i<offsets.length; i++){
+                    if(board[this.tile+offsets[i].offset]==null || board[this.tile+offsets[i].offset].team!=this.team){
+                        if((this.tile+offsets[i].offset)%8-this.tile%8==offsets[i].colDifference){
+                          availableMoves.push(this.tile+offsets[i].offset)  
+                        }
+                    }
+                }
+                console.log(availableMoves);
+                return availableMoves;
+            }
     }
 
     class Rook{
