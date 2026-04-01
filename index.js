@@ -57,7 +57,7 @@ const roomsData = new Map();
                     }
                 }
                 possibleTile=this.tile;
-                while(possibleTile%8!=0){
+                while((possibleTile+9)%8!=0){
                     if(board[possibleTile+9]==null){
                         availableMoves.push(possibleTile+9);
                         possibleTile+=9;
@@ -85,7 +85,7 @@ const roomsData = new Map();
                     }
                 }
                 possibleTile=this.tile;
-                while((possibleTile-7)%8!=0){
+                while((possibleTile+7)%8!=7){
                     if(board[possibleTile+7]==null){
                         availableMoves.push(possibleTile+7);
                         possibleTile+=7;
