@@ -44,10 +44,13 @@ const roomsData = new Map();
                 let availableMoves=[]
                 let possibleTile=this.tile;
                 while(possibleTile%8!=0){
-                    if(board[possibleTile-9]==null || board[possibleTile-9].team!=this.team){
-                        console.log(board[possibleTile-9]);
+                    if(board[possibleTile-9]==null){
                         availableMoves.push(possibleTile-9);
                         possibleTile-=9;
+                    }
+                    else if(board[possibleTile-9].team!=this.team){
+                      availableMoves.push(possibleTile-9);
+                      break;
                     }
                     else{
                         break;
@@ -55,30 +58,41 @@ const roomsData = new Map();
                 }
                 possibleTile=this.tile;
                 while(possibleTile%8!=0){
-                    if(board[possibleTile+9]==null || board[possibleTile+9].team!=this.team){
-                        console.log(board[possibleTile+9]);
+                    if(board[possibleTile+9]==null){
                         availableMoves.push(possibleTile+9);
                         possibleTile+=9;
                     }
+                    else if(board[possibleTile+9].team!=this.team){
+                      availableMoves.push(possibleTile+9);
+                      break;
+                    }
                     else{
                         break;
                     }
                 }
                 possibleTile=this.tile;
                 while((possibleTile-7)%8!=0){
-                    if(board[possibleTile-7]==null || board[possibleTile-7].team!=this.team){
+                    if(board[possibleTile-7]==null){
                         availableMoves.push(possibleTile-7);
                         possibleTile-=7;
                     }
+                    else if(board[possibleTile-7].team!=this.team){
+                      availableMoves.push(possibleTile-7);
+                      break;
+                    }
                     else{
                         break;
                     }
                 }
                 possibleTile=this.tile;
                 while((possibleTile-7)%8!=0){
-                    if(board[possibleTile+7]==null || board[possibleTile+7].team!=this.team){
+                    if(board[possibleTile+7]==null){
                         availableMoves.push(possibleTile+7);
                         possibleTile+=7;
+                    }
+                    else if(board[possibleTile+7].team!=this.team){
+                      availableMoves.push(possibleTile+7);
+                      break;
                     }
                     else{
                         break;

@@ -11,7 +11,6 @@
 
 
         <h2>Play with a friend</h2>
-
     <label for="createRoomInput">Click Create Room for a code you can share with your friend.</label>
     <input name="createRoomInput" id="createRoomInput" type="submit" value="Create Room" onclick="CreateRoom()">
     <p id="roomIdInformer"></p>
@@ -122,10 +121,13 @@
                 let availableMoves=[]
                 let possibleTile=this.tile;
                 while(possibleTile%8!=0){
-                    if(board[possibleTile-9]==null || board[possibleTile-9].team!=this.team){
-                        console.log(board[possibleTile-9]);
+                    if(board[possibleTile-9]==null){
                         availableMoves.push(possibleTile-9);
                         possibleTile-=9;
+                    }
+                    else if(board[possibleTile-9].team!=this.team){
+                      availableMoves.push(possibleTile-9);
+                      break;
                     }
                     else{
                         break;
@@ -133,30 +135,41 @@
                 }
                 possibleTile=this.tile;
                 while(possibleTile%8!=0){
-                    if(board[possibleTile+9]==null || board[possibleTile+9].team!=this.team){
-                        console.log(board[possibleTile+9]);
+                    if(board[possibleTile+9]==null){
                         availableMoves.push(possibleTile+9);
                         possibleTile+=9;
                     }
+                    else if(board[possibleTile+9].team!=this.team){
+                      availableMoves.push(possibleTile+9);
+                      break;
+                    }
                     else{
                         break;
                     }
                 }
                 possibleTile=this.tile;
                 while((possibleTile-7)%8!=0){
-                    if(board[possibleTile-7]==null || board[possibleTile-7].team!=this.team){
+                    if(board[possibleTile-7]==null){
                         availableMoves.push(possibleTile-7);
                         possibleTile-=7;
                     }
+                    else if(board[possibleTile-7].team!=this.team){
+                      availableMoves.push(possibleTile-7);
+                      break;
+                    }
                     else{
                         break;
                     }
                 }
                 possibleTile=this.tile;
                 while((possibleTile-7)%8!=0){
-                    if(board[possibleTile+7]==null || board[possibleTile+7].team!=this.team){
+                    if(board[possibleTile+7]==null){
                         availableMoves.push(possibleTile+7);
                         possibleTile+=7;
+                    }
+                    else if(board[possibleTile+7].team!=this.team){
+                      availableMoves.push(possibleTile+7);
+                      break;
                     }
                     else{
                         break;
@@ -186,29 +199,18 @@
             getMoves(board){
                 let availableMoves=[];
                 console.log(this.tile);
-                if(board[this.tile+15]== null || board[this.tile+15].team!=this.team){
-                    availableMoves.push(this.tile+15);
-                }
-                if(board[this.tile-15]== null || board[this.tile-15].team!=this.team){
-                    availableMoves.push(this.tile-15);
-                }
-                if(board[this.tile+17]== null || board[this.tile+17].team!=this.team){
-                    availableMoves.push(this.tile+17);
-                }
-                if(board[this.tile-17]== null || board[this.tile-17].team!=this.team){
-                    availableMoves.push(this.tile-17);
-                }
-                if(board[this.tile-6]== null || board[this.tile-6].team!=this.team){
-                    availableMoves.push(this.tile-6);
-                }
-                if(board[this.tile+6]== null || board[this.tile+6].team!=this.team){
-                    availableMoves.push(this.tile+6);
-                }
-                if(board[this.tile+10]== null || board[this.tile+10].team!=this.team){
-                    availableMoves.push(this.tile+10);
-                }
-                if(board[this.tile-10]== null || board[this.tile-10].team!=this.team){
-                    availableMoves.push(this.tile-10);
+                const offsets =[
+                    {offset: 15, colDifference:-1}, {offset: -15, colDifference:1},
+                    {offset: 17, colDifference:1}, {offset: -17, colDifference:-1},
+                    {offset: 6, colDifference:-2}, {offset: -6, colDifference:2},
+                    {offset: 10, colDifference:2}, {offset: -10, colDifference:-2}
+                ]
+                for(let i=0; i<offsets.length; i++){
+                    if(board[this.tile+offsets[i].offset]==null || board[this.tile+offsets[i].offset].team!=this.team){
+                        if((this.tile+offsets[i].offset)%8-this.tile%8==offsets[i].colDifference){
+                          availableMoves.push(this.tile+offsets[i].offset)  
+                        }
+                    }
                 }
                 console.log(availableMoves);
                 return availableMoves;
@@ -330,14 +332,6 @@
                 }
                 console.log(availableMoves);
                 return availableMoves;
-                //board[this.tile-8] = this;
-                //board[this.tile] = null;
-                //let r = Math.floor(this.tile /8);
-                //let c = this.tile % 8;
-                //ctx.fillStyle = colors[(r+c) & 1];
-                //ctx.fillRect(c*64, r*64, 64, 64);
-                //this.tile = this.tile-8;
-                //this.drawSelf(ctx, sprites);
             }
 
         }
