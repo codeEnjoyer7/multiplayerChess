@@ -24,7 +24,7 @@ const roomsData = new Map();
             this.symbol="K"
         }
 
-        getMoves(board){
+        getMoves(board){ //TODO: Prevent the king from moving into check.
           let availableMoves=[]
           const offsets =[
                     {offset: 8, colDifference: 0}, {offset: -8, colDifference: 0},
@@ -35,12 +35,174 @@ const roomsData = new Map();
                 for(let i=0; i<offsets.length; i++){
                   if(board[this.tile+offsets[i].offset]==null || board[this.tile+offsets[i].offset].team!=this.team){
                     if((this.tile+offsets[i].offset)%8-this.tile%8==offsets[i].colDifference){
-                      availableMoves.push(this.tile+offsets[i].offset)  
+                      availableMoves.push(this.tile+offsets[i].offset)
                     }
                   }
                 }
           return availableMoves;
         }
+
+        IsInCheck(board){
+          //SEEING IF A KNIGHT IS CHECKING THE KING
+          let offsets =[
+                    {offset: 15, colDifference:-1}, {offset: -15, colDifference:1},
+                    {offset: 17, colDifference:1}, {offset: -17, colDifference:-1},
+                    {offset: 6, colDifference:-2}, {offset: -6, colDifference:2},
+                    {offset: 10, colDifference:2}, {offset: -10, colDifference:-2}
+                ]
+                for(let i=0; i<offsets.length; i++){
+                    if(board[this.tile+offsets[i].offset]!=null && board[this.tile+offsets[i].offset].team!=this.team && board[this.tile+offsets[i].offset].symbol=="n"){
+                        if((this.tile+offsets[i].offset)%8-this.tile%8==offsets[i].colDifference){
+                          return true;
+                        }
+                    }
+                }
+            // SEEING IF AN ENEMY KING IS CHECKING THE KING
+            offsets =[
+                    {offset: 8, colDifference: 0}, {offset: -8, colDifference: 0},
+                    {offset: 9, colDifference: 1}, {offset: -9, colDifference: -1},
+                    {offset: 7, colDifference: -1}, {offset: -7, colDifference: 1},
+                    {offset: 1, colDifference: 1}, {offset: -1, colDifference: -1}
+                ]
+                for(let i=0; i<offsets.length; i++){
+                  if(board[this.tile+offsets[i].offset]!=null && board[this.tile+offsets[i].offset].team!=this.team && board[this.tile+offsets[i].offset].symbol=="k"){
+                    if((this.tile+offsets[i].offset)%8-this.tile%8==offsets[i].colDifference){
+                      return true;
+                    }
+                  }
+                }
+            //SEEING IF A PAWN IS CHECKING THE KING
+            if(board[this.tile-7]!=null && board[this.tile-7].team!=this.team && board[this.tile-7].symbol=="p"){
+                    return true;
+                }
+                if(board[this.tile-9]!=null && board[this.tile-9].team!=this.team && board[this.tile-7].symbol=="p"){
+                    return true;
+                }
+            //SEEING IF A BISHOP OR DIAGANOL QUEEN IS CHECKING THE KING
+            let possibleTile=this.tile
+            while(possibleTile%8!=0){
+                    if(board[possibleTile-9]==null){
+                        possibleTile-=9
+                    }
+                    else if(board[possibleTile-9]!=null && board[possibleTile-9].team==this.team){
+                        break;
+                    }
+                    else{
+                        if(board[possibleTile-9].symbol=="b" || board[possibleTile-9].symbol=="q"){
+                            return true;
+                        }
+                        break;
+                    }
+                }
+                possibleTile=this.tile;
+                while((possibleTile+9)%8!=0){
+                    if(board[possibleTile+9]==null){
+                        possibleTile+=9
+                    }
+                    else if(board[possibleTile+9]!=null && board[possibleTile+9].team==this.team){
+                        break;
+                    }
+                    else{
+                        if(board[possibleTile+9].symbol=="b" || board[possibleTile+9].symbol=="q"){
+                            return true;
+                        }
+                        break;
+                    }
+                }
+                possibleTile=this.tile;
+                while((possibleTile-7)%8!=0){
+                    if(board[possibleTile-7]==null){
+                        possibleTile-=7
+                    }
+                    else if(board[possibleTile-7]!=null && board[possibleTile-7].team==this.team){
+                        break;
+                    }
+                    else{
+                        if(board[possibleTile-7].symbol=="b" || board[possibleTile-7].symbol=="q"){
+                            return true;
+                        }
+                        break;
+                    }
+                }
+                possibleTile=this.tile;
+                while((possibleTile+7)%8!=7){
+                    if(board[possibleTile+7]==null){
+                        possibleTile+=7
+                    }
+                    else if(board[possibleTile+7]!=null && board[possibleTile+7].team==this.team){
+                        break;
+                    }
+                    else{
+                        if(board[possibleTile+7].symbol=="b" || board[possibleTile+7].symbol=="q"){
+                            return true;
+                        }
+                        break;
+                    }
+                }
+                //SEEING IF A ROOK OR ADJACENT QUEEN IS CHECKING THE KING
+                possibleTile=this.tile;
+                while(Math.floor((possibleTile)/8)!=0){
+                    if(board[possibleTile-8]==null){
+                        possibleTile-=8
+                    }
+                    else if(board[possibleTile-8]!=null && board[possibleTile-8].team==this.team){
+                        break;
+                    }
+                    else{
+                        if(board[possibleTile-8].symbol=="r" || board[possibleTile-8].symbol=="q"){
+                            return true;
+                        }
+                        break;
+                    }
+                }
+                possibleTile=this.tile;
+                while(Math.floor((possibleTile)/8)!=7){
+                    if(board[possibleTile+8]==null){
+                        possibleTile+=8
+                    }
+                    else if(board[possibleTile+8]!=null && board[possibleTile+8].team==this.team){
+                        break;
+                    }
+                    else{
+                        if(board[possibleTile+8].symbol=="r" || board[possibleTile+8].symbol=="q"){
+                            return true;
+                        }
+                        break;
+                    }
+                }
+                possibleTile=this.tile;
+                while(possibleTile%8!=0){
+                    if(board[possibleTile-1]==null){
+                        possibleTile-=1
+                    }
+                    else if(board[possibleTile-1]!=null && board[possibleTile-1].team==this.team){
+                        break;
+                    }
+                    else{
+                        if(board[possibleTile-1].symbol=="r" || board[possibleTile-1].symbol=="q"){
+                            return true;
+                        }
+                        break;
+                    }
+                }
+                possibleTile=this.tile;
+                while(possibleTile%8!=7){
+                    if(board[possibleTile+1]==null){
+                        possibleTile+=1
+                    }
+                    else if(board[possibleTile+1]!=null && board[possibleTile+1].team==this.team){
+                        break;
+                    }
+                    else{
+                        if(board[possibleTile+1].symbol=="r" || board[possibleTile+1].symbol=="q"){
+                            return true;
+                        }
+                        break;
+                    }
+                }
+            return false;
+        }
+
       }
 
       class Queen{
