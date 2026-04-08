@@ -695,6 +695,18 @@
                 currentlySelectedPiece.drawSelf(ctx, sprites);
                 availableMoves=currentlySelectedPiece.getMoves(objectBoard);
                     for(let i=0; i<availableMoves.length; i++){
+                       /* let originalTile = currentlySelectedPiece.tile;
+                        let targetPiece = objectBoard[proposedTile];
+                        objectBoard[currentlySelectedPiece.tile]=null;
+                        currentlySelectedPiece.tile=proposedTile;
+                        objectBoard[proposedTile]=currentlySelectedPiece;
+                        if(myKing.IsInCheck(objectBoard)){
+                            console.log("the king could get put in check");
+                        }
+                        objectBoard[proposedTile] = targetPiece;
+                        currentlySelectedPiece.tile=originalTile;
+                        objectBoard[originalTile] = currentlySelectedPiece;
+                        */
                         let tile = availableMoves[i];
                         let r = Math.floor(tile /8);
                         let c = tile % 8;
